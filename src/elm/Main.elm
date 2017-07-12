@@ -1,6 +1,7 @@
 module Main exposing (..)
 
-import Html exposing (..)
+import Html as H exposing (..)
+import Html.Attributes exposing (..)
 import Html.Events exposing (..)
 import Round
 
@@ -10,7 +11,7 @@ import Round
 
 main : Program Never Model Msg
 main =
-    Html.beginnerProgram { model = model, view = view, update = update }
+    H.beginnerProgram { model = model, view = view, update = update }
 
 
 
@@ -87,12 +88,27 @@ view model =
     let
         factor =
             allometricFactor model.athleteWeight model.liftedWeight
+                |> Round.round 2
     in
     div
-        []
-        [ input [ onInput UpdateAthleteWeight ] []
-        , input [ onInput UpdateLiftedWeight ] []
-        , div
-            []
-            [ text (Round.round 2 factor) ]
+        [ class "row" ]
+        [ div
+            [ class "col-md-12" ]
+            [ H.form
+                []
+                [ div
+                    [ class "form-group" ]
+                    [ label [ for "athlete-weight" ] [ text "Athlete weight" ]
+                    , input [ id "athlete-weight", class "form-control", onInput UpdateAthleteWeight ] []
+                    ]
+                , div
+                    [ class "form-group" ]
+                    [ label [ for "lifted-weight" ] [ text "Lifted weight" ]
+                    , input [ id "lifted-weight", class "form-control", onInput UpdateLiftedWeight ] []
+                    ]
+                ]
+            , div
+                []
+                [ text ("Your allometric factor is: " ++ factor) ]
+            ]
         ]
