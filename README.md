@@ -8,6 +8,7 @@ comparison between athletes of different weight.
 
 [Kto jest silniejszy? (PL)](http://bestrongfirst.pl/kettlebells/kto-jest-silniejszy/)
 
+Disclaimer: we're using it for various Elm-related exlorations and trainings.
 
 ### Technical:
 
