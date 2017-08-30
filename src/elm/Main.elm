@@ -27,14 +27,14 @@ type LiftedWeight
 
 
 type alias Model =
-    { athleteWeight : AthleteWeight
+    { athleteWeight : Maybe AthleteWeight
     , liftedWeight : LiftedWeight
     }
 
 
 model : Model
 model =
-    { athleteWeight = AthleteWeight 0, liftedWeight = LiftedWeight 0 }
+    { athleteWeight = Nothing, liftedWeight = LiftedWeight 0 }
 
 
 
@@ -51,15 +51,12 @@ update msg model =
     case msg of
         UpdateAthleteWeight weightString ->
             let
-                weightInt =
-                    case String.toInt weightString of
-                        Ok w ->
-                            w
-
-                        Err _ ->
-                            0
+                weight =
+                    String.toInt weightString
+                        |> Result.map AthleteWeight
+                        |> Result.toMaybe
             in
-            { model | athleteWeight = AthleteWeight weightInt }
+            { model | athleteWeight = weight }
 
         UpdateLiftedWeight weightString ->
             let
@@ -87,8 +84,10 @@ view : Model -> Html Msg
 view model =
     let
         factor =
-            allometricFactor model.athleteWeight model.liftedWeight
-                |> Round.round 2
+            model.athleteWeight
+                |> Maybe.map (\aw -> allometricFactor aw model.liftedWeight)
+                |> Maybe.map (Round.round 2)
+                |> Maybe.withDefault "unknown"
     in
     div
         [ class "row" ]
